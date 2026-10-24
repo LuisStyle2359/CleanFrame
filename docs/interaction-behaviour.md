@@ -79,8 +79,12 @@ Launcher wallpaper is separate from native Art Mode. Runtime photos, materials a
 
 The native Home operation and startup configuration from 19 October remain separate from this app update. Home from Netflix was confirmed for that configuration; power-on after Netflix remains provisional. Streaming apps retain their own Back navigation. Netflix did not exit on repeated Back in the observed test, so there was no app-exit destination to verify. No global Back interception or key-filter hook was installed. See [TV status](tv-status.md) for device evidence; this behaviour specification is not an installation or visual-verification record for 0.6.0.
 
+## Language
+
+The interface follows the TV language: German when it starts with `de`, otherwise English. Brand, app and font names, Art Mode and the TV's own Home names stay as their owners show them.
+
 ## Clock and rendering
 
-Both layouts show the TV's local time in 12-hour format, without AM/PM or seconds. It updates at the minute boundary and on return to the launcher. No date or clock panel is shown.
+Both layouts show the TV's local time without AM/PM or seconds: 12-hour in English, 24-hour in German (9:05, 16:54). It updates at the minute boundary and on return to the launcher. No date or clock panel is shown.
 
 Photographic materials and blurred panel backgrounds are generated before packaging and stay aligned with the full-screen image. Photo colour and contrast metadata are also prepared offline. Navigation does not sample image pixels, run an optics engine or apply live backdrop blur. Flat backgrounds use matching light or dark panel colours. Focus feedback uses transforms and opacity; reduced motion removes animated scaling and movement while retaining opacity feedback.

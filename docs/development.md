@@ -12,7 +12,8 @@ All UI assets, public fonts and the fifteen wallpapers are bundled. This private
 
 ## Runtime map and compatibility
 
-- `app/index.html` loads the device adapter, gallery/font/palette catalogues, `assets/icons/metrics.js` and `main.js`, with `style.css`.
+- `app/index.html` loads `i18n.js`, the device adapter, gallery/font/palette catalogues, `assets/icons/metrics.js` and `main.js`, with `style.css`.
+- `i18n.js` picks German when the browser/TV language starts with `de`, otherwise English; `?lang=de` or `?lang=en` overrides it in the preview. English strings are the templates (`T('{app} moved to position {n}.', …)`), so add a German entry to `i18n.js` with any new visible text. Brand, app and font names, log text and storage keys stay untranslated.
 - `main.js` owns the List and Dock layouts, panel stack, focus, preferences and wallpaper timers. `device.js` owns installed-app discovery and Tizen calls. Keep device details in that adapter.
 - The logical stage is 1920 x 1080, scaled uniformly to the viewport. Check at 1920 x 1080 and 1280 x 720. Glass geometry and cached materials must stay aligned.
 - Preferences use localStorage key `cleanframe.home.v1`, with a fallback read from `cleanframe.shore.v1`. Legacy fields are `dock`, `wallpaper`, `mode`, `lastApp` and `theme`. The 0.6 migration preserves app order, wallpaper, rotation and selection. Legacy `list` becomes Dark / List / Type; `shore` and `grid` become Photo / Dock / Glass. Appearance axes are stored separately. A saved dynamic app keeps its real app ID and name; discovery refreshes the installed catalogue. Keep migration checks when changing this format.

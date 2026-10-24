@@ -17,14 +17,15 @@
     'ZODRT12q2l.WebAccountExtension', 'ByJlgt0XeD.CastSettingsApp', 'tv6pbVMQFF.PrivacyChoices'];
   var SELF = 'nClrkHome1.FrameHome';
   function api() { return window.tizen && window.tizen.application; }
+  function T(text) { return window.CleanFrameI18n ? window.CleanFrameI18n.t(text) : text; }
   function unavailable(done) {
-    done({ message: 'Open CleanFrame on the TV to use this control.', detail: 'The web preview cannot control the TV.' });
+    done({ message: T('Open CleanFrame on the TV to use this control.'), detail: T('The web preview cannot control the TV.') });
   }
   function failure(err) {
-    return { message: 'The TV could not open this screen.', detail: err && (err.message || err.name) || 'Try again, or press the remote’s Home button to return to CleanFrame.' };
+    return { message: T('The TV could not open this screen.'), detail: err && (err.message || err.name) || T('Try again, or press the remote’s Home button to return to CleanFrame.') };
   }
   function bounded(done) {
-    var finished = false, timer = setTimeout(function () { finish({ message: 'The TV did not respond. Please try again.' }); }, 8000);
+    var finished = false, timer = setTimeout(function () { finish({ message: T('The TV did not respond. Please try again.') }); }, 8000);
     function finish(err, value) { if (finished) return; finished = true; clearTimeout(timer); done(err, value); }
     return finish;
   }
@@ -35,7 +36,7 @@
     catch (err) { finish(failure(err)); }
   }
   function launch(brand, done) {
-    if (!IDS[brand]) { done({message: 'This app has no launch target.'}); return; }
+    if (!IDS[brand]) { done({message: T('This app has no launch target.')}); return; }
     launchApp(IDS[brand], done);
   }
   function art(done) {

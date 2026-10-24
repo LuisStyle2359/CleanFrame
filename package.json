@@ -5,7 +5,7 @@
   "description": "A personal, uncluttered home interface for Samsung The Frame and LG webOS TVs.",
   "scripts": {
     "dev": "node scripts/py.mjs scripts/preview.py",
-    "check": "node --check app/main.js && node --check app/device.js && node --check app/device-webos.js && node scripts/py.mjs scripts/check.py",
+    "check": "node --check app/i18n.js && node --check app/main.js && node --check app/device.js && node --check app/device-webos.js && node scripts/py.mjs scripts/check.py",
     "package": "node scripts/py.mjs scripts/package.py",
     "tv:info": "node scripts/py.mjs scripts/tv.py info",
     "tv:install": "node scripts/py.mjs scripts/tv.py install",

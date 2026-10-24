@@ -25,18 +25,19 @@
   ];
   var bridges = [];
   function api() { return typeof window.PalmServiceBridge !== 'undefined'; }
+  function T(text) { return window.CleanFrameI18n ? window.CleanFrameI18n.t(text) : text; }
   function unavailable(done) {
-    done({ message: 'Open CleanFrame on the TV to use this control.', detail: 'The web preview cannot control the TV.' });
+    done({ message: T('Open CleanFrame on the TV to use this control.'), detail: T('The web preview cannot control the TV.') });
   }
   // Luna reports an unknown app ID as error -101 ("... not exist").
   function missing(err) { return !!err && (err.errorCode === -101 || /not (?:exist|found)|cannot find/i.test(String(err.errorText || ''))); }
   // Luna's own error text stays out of the UI; it is technical and English-only.
   function failure(err, what) {
-    if (what === 'app' && missing(err)) return { message: 'This app is not installed on this TV.', detail: 'Install it from the LG Content Store, or remove it from Home in Settings.' };
-    return { message: 'The TV could not open this ' + (what || 'screen') + '.', detail: 'Try again, or press the remote’s Home button to return to the LG Home screen.' };
+    if (what === 'app' && missing(err)) return { message: T('This app is not installed on this TV.'), detail: T('Install it from the LG Content Store, or remove it from Home in Settings.') };
+    return { message: T(what === 'app' ? 'The TV could not open this app.' : 'The TV could not open this screen.'), detail: T('Try again, or press the remote’s Home button to return to the LG Home screen.') };
   }
   function bounded(done) {
-    var finished = false, timer = setTimeout(function () { finish({ message: 'The TV did not respond. Please try again.' }); }, 8000);
+    var finished = false, timer = setTimeout(function () { finish({ message: T('The TV did not respond. Please try again.') }); }, 8000);
     function finish(err, value) { if (finished) return; finished = true; clearTimeout(timer); done(err, value); }
     finish.done = function () { return finished; };
     return finish;
@@ -83,7 +84,7 @@
     launchFirst(ids, done, 'app');
   }
   function launch(brand, done) {
-    if (!IDS[brand]) { done({ message: 'This app has no launch target.' }); return; }
+    if (!IDS[brand]) { done({ message: T('This app has no launch target.') }); return; }
     launchFirst(IDS[brand], done, 'app');
   }
   function home(done) { launchFirst(HOME, done); }
@@ -108,7 +109,7 @@
         if (!err && reply.exist === true) found[i] = { id: a[0], title: a[1] };
         else if (err && !err.timeout) refused++;
         if (--left) return;
-        if (refused === KNOWN.length) done({ message: 'This TV does not let CleanFrame read its installed apps.' });
+        if (refused === KNOWN.length) done({ message: T('This TV does not let CleanFrame read its installed apps.') });
         else done(null, found.filter(Boolean));
       }, 2500);
     });
@@ -118,7 +119,7 @@
     var finish = bounded(done);
     function reply(list) {
       try { finish(null, catalogue(list)); }
-      catch (err) { finish({ message: 'Could not read installed apps.' }); }
+      catch (err) { finish({ message: T('Could not read installed apps.') }); }
     }
     // Launch points are what the LG launcher shows; only rooted TVs allow them to developer apps.
     luna('luna://com.webos.applicationManager/listLaunchPoints', {}, function (err, answer) {
