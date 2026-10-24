@@ -75,7 +75,7 @@ npm run dev:public
 3. Die Developer-Mode-App erneut öffnen und **Key Server** einschalten.
 4. Die angezeigte **IP-Adresse** und die **Passphrase** notieren.
 
-Die Entwicklermodus-Sitzung läuft laut LG nach 50 Stunden ab. Danach entfernt der Fernseher selbst installierte Apps wieder. Drücke deshalb in der Developer-Mode-App regelmäßig, spätestens alle zwei Tage, auf **Extend**. Die verbleibende Zeit steht in der App.
+Die Entwicklermodus-Sitzung ist begrenzt. Auf dem Zielgerät (webOS 25) startet sie mit 999 Stunden, also rund 41 Tagen; ältere Angaben von LG nennen 50 Stunden. Läuft sie ab, entfernt der Fernseher selbst installierte Apps wieder. Prüfe deshalb die verbleibende Zeit in der Developer-Mode-App und verlängere die Sitzung dort rechtzeitig.
 
 ## 4. Fernseher mit dem PC verbinden (einmalig)
 
