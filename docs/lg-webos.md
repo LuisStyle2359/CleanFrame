@@ -6,6 +6,8 @@ Dieser Fork bringt CleanFrame auf LG-Fernseher mit webOS. Oberfläche, Einstellu
 
 **Stand:** Der LG-Adapter ist im Browser mit einem nachgebauten webOS-Dienst getestet (`npm run check:webos`). Auf einem echten LG-Fernseher ist er noch **nicht** ausprobiert worden. Rechne damit, dass beim ersten Test auf dem Gerät noch Kleinigkeiten anzupassen sind.
 
+**Zielgerät:** LG 43UA73006LA (UHD-LED, 2025), webOS 25 / 10.3.2-34, knapp 1 GB interner Speicher, davon etwa 0,38 GB frei. Das Paket ist rund 16 MB groß.
+
 ## Was anders ist als bei Samsung
 
 | Bereich | Samsung (Tizen) | LG (webOS) |
