@@ -1,0 +1,12 @@
+{
+  "id": "io.github.luisstyle2359.cleanframe",
+  "version": "0.6.1",
+  "vendor": "CleanFrame",
+  "type": "web",
+  "main": "index.html",
+  "title": "CleanFrame",
+  "icon": "icon-80.png",
+  "largeIcon": "icon-130.png",
+  "resolution": "1920x1080",
+  "disableBackHistoryAPI": true
+}

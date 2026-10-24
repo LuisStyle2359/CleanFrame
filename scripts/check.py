@@ -43,4 +43,11 @@ for wall in walls:
     assert (app / ('assets/wallpapers/' + wall_id + '-panel.jpg')).is_file(), 'Missing panel backdrop: ' + wall_id
 for icon in ['stremio', 'netflix', 'disneyplus', 'youtube', 'appletv', 'primevideo', 'abciview', 'sbs', 'applemusic', 'art', 'apps', 'settings']:
     assert (app / ('assets/icons/' + icon + '.svg')).is_file(), 'Missing icon: ' + icon
-print('Widget identity, version and bundled resources are valid.')
+webos = json.loads((root / 'webos/appinfo.json').read_text())
+assert webos.get('version') == manifest.get('version'), 'webOS/Tizen versions differ'
+assert re.fullmatch(r'[a-z0-9][a-z0-9.-]*', webos.get('id', '')) and not webos['id'].startswith(('com.webos.', 'com.lge.', 'com.palm.')), 'Use your own webOS app ID'
+assert "SELF = '" + webos['id'] + "'" in (app / 'device-webos.js').read_text(), 'device-webos.js SELF differs from webos/appinfo.json'
+assert webos.get('disableBackHistoryAPI') is True, 'webOS Back must reach the app'
+for field in ['icon', 'largeIcon']:
+    assert (root / 'webos' / webos[field]).is_file(), 'Missing webOS ' + field
+print('Widget and webOS identity, version and bundled resources are valid.')
