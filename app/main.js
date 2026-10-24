@@ -691,7 +691,8 @@
     norm: function (t) {
       var n = appsItems().length;
       t.f.i = clamp(t.f.i, 0, Math.max(0, n - 1));
-      if (!n) t.f.zone = 'head';
+      if (!n) { if (t.f.zone !== 'head') t.waiting = true; t.f.zone = 'head'; }
+      else if (t.waiting) { t.waiting = false; if (t.f.zone === 'head') t.f.zone = 'grid'; }
     },
     key: function (t, k) {
       var f = t.f, items = appsItems(), n = items.length, col = f.i % COLS, row = Math.floor(f.i / COLS);
@@ -960,7 +961,7 @@
       if (k === 'left') t.f.b = Math.max(0, t.f.b - 1);
       else if (k === 'right') t.f.b = Math.min(A.length - 1, t.f.b + 1);
       else if (k === 'back') pop();
-      else if (k === 'ok') { a = A[t.f.b][0]; pop(); if (a === 'samsung') perform(TV.home, FrameDevice.home); }
+      else if (k === 'ok') { a = A[t.f.b][0]; if (a === 'samsung' && busy) return; pop(); if (a === 'samsung') perform(TV.home, FrameDevice.home); }
     },
     point: function (t, z, i) { if (z === 'act') { t.f.b = i; this.key(t, 'ok'); } }
   };
@@ -1548,7 +1549,8 @@
     editor: function (t, el) {
       var f = t.f, H = t.lifted ? t.lifted.order : S.c.home, O = otherGroups(), list = O.recent.concat(O.rest), full = S.c.home.length >= CAP;
       var entries = [], ys = [], y = 0, yf, minTop, maxTop = 0, rowEnd, before = false, afterRows = false;
-      var hint = catalog.error ? catalog.error : catalog.loading ? 'Loading installed apps…' : f.zone === 'head' && f.h === 0 ? undoCaption() : f.zone === 'home' && f.part === 'remove' ? (H.length <= 1 ? LAST : app(H[f.i]).name + ' stays installed.') : '';
+      var hint = f.zone === 'head' && f.h === 0 ? undoCaption() : f.zone === 'home' && f.part === 'remove' ? (H.length <= 1 ? LAST : app(H[f.i]).name + ' stays installed.') : '';
+      if (!hint && !S.note) hint = catalog.error ? catalog.error : catalog.loading ? 'Loading installed apps…' : '';
       setHTML(el.sub, editStatus(hint, t.lifted ? 'Moving ' + app(t.lifted.id).name + '. OK places it, Back puts it back.' : ''));
       setHTML(el.head, headButtons([['undo', 'Undo', S.undo.length ? '' : 'is-idle', 'undo'], ['done', 'Done', '', 'check']], f.zone === 'head' ? f.h : -1, 'editor'));
       el.head.className = 's-head' + (f.zone === 'head' ? ' is-awake' : '');

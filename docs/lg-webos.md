@@ -23,60 +23,101 @@ Die Zurück-Taste der LG-Fernbedienung (Code 461) kommt bei CleanFrame an, weil 
 
 ### Installierte Apps
 
-webOS erlaubt selbst installierten Apps normalerweise nicht, die Liste aller Apps zu lesen. CleanFrame versucht es trotzdem; auf gerooteten oder älteren Geräten klappt es. Wird die Anfrage abgelehnt, fragt CleanFrame für eine Liste bekannter Apps einzeln nach, ob sie installiert sind, und zeigt nur die vorhandenen. Diese Liste steht in `KNOWN` in `app/device-webos.js` und enthält unter anderem Netflix, YouTube, Disney+, Prime Video, Apple TV, Max, Spotify, Plex, Jellyfin, Live TV, HDMI 1–4 und den Browser.
+webOS lässt selbst installierte Apps im Entwicklermodus die Liste aller Apps nicht lesen; das geht nur auf gerooteten Fernsehern. CleanFrame fragt deshalb für eine Liste bekannter Apps einzeln nach, ob sie installiert sind, und zeigt nur die vorhandenen. Eine App, die nicht innerhalb von 2,5 Sekunden antwortet, gilt als nicht installiert. Die Liste steht in `KNOWN` in `app/device-webos.js` und enthält unter anderem Netflix, YouTube, Disney+, Prime Video, Apple TV, Max, Spotify, Plex, Jellyfin, Live TV, HDMI 1–4 und den Browser. Apps wie MagentaTV, Joyn, ARD oder ZDF fehlen noch, weil ihre LG-App-IDs nicht bekannt sind.
 
-**Eigene Apps ergänzen:** Füge in `KNOWN` ein Paar `['app-id', 'Name']` hinzu. Die App-ID findest du mit dem LG-Werkzeug, solange der Entwicklermodus aktiv ist:
+**Eigene Apps ergänzen:** Starte die gewünschte App auf dem Fernseher und führe dann aus:
 
-```sh
-npx -p @webos-tools/cli@3.2.6 ares-launch -d tv --running   # zeigt die gerade laufende App
+```bat
+npm run lg:running
 ```
 
-Starte dafür die gewünschte App auf dem Fernseher und führe den Befehl dann aus. Auf gerooteten Geräten listet `luna-send -n 1 luna://com.webos.applicationManager/listLaunchPoints '{}'` alle Apps auf.
+Die angezeigte ID trägst du als Paar `['app-id', 'Name']` in `KNOWN` ein.
 
-Die Standard-Apps auf der Startseite sind Netflix, Disney+, YouTube, Apple TV und Prime Video. Prime Video wird zuerst als `amazon`, dann als älteres deutsches `lovefilm.de` gestartet.
+Die Standard-Apps auf der Startseite sind Netflix, Disney+, YouTube, Apple TV und Prime Video. Prime Video wird zuerst als `amazon` gestartet und nur, wenn diese App fehlt, als älteres deutsches `lovefilm.de`.
 
 ## Voraussetzungen
 
 - LG-Fernseher mit **webOS 22 oder neuer** (Modelle ab 2022). Ältere Versionen nutzen einen zu alten Browser; Abstände in der Oberfläche wären dort falsch.
-- Rechner mit Node.js 22+ und Python 3.10+ im selben Netzwerk wie der Fernseher.
+- Ein Windows-PC im **selben Netzwerk** wie der Fernseher, ohne Gäste-WLAN und ohne VPN. Auf Mac und Linux funktionieren dieselben Befehle.
 - Ein kostenloses Konto bei [LG Developer](https://webostv.developer.lge.com/).
 
-## 1. Im Browser ausprobieren
+## 1. Programme auf dem PC installieren (einmalig)
 
-```sh
+In dieser Reihenfolge:
+
+1. **Node.js** in der LTS-Version (22 oder neuer) von [nodejs.org](https://nodejs.org/) herunterladen und mit den Standard-Einstellungen installieren.
+2. **Python 3** von [python.org](https://www.python.org/downloads/) installieren. Im ersten Fenster des Installers unbedingt **„Add python.exe to PATH“** ankreuzen.
+3. Den **Code** herunterladen: [CleanFrame als ZIP](https://github.com/LuisStyle2359/CleanFrame/archive/refs/heads/ccr-24a8de1f-nn26ot.zip). Die ZIP-Datei entpacken, zum Beispiel nach `C:\CleanFrame`.
+
+Öffne dann die **Eingabeaufforderung**: Windows-Taste drücken, `cmd` tippen, Enter. Nimm nicht PowerShell; dort blockiert Windows die `npm`-Befehle standardmäßig. Prüfe die Installation und wechsle in den CleanFrame-Ordner:
+
+```bat
+node -v
+py --version
+cd C:\CleanFrame
 npm ci
+```
+
+`node -v` muss `v22` oder höher zeigen, `py --version` eine `Python 3`-Version. Den Ordnernamen nach `cd` passt du an, falls du woanders entpackt hast; der Ordner muss die Datei `package.json` enthalten. Alle weiteren Befehle führst du in diesem Ordner aus.
+
+## 2. Im Browser ausprobieren (optional)
+
+```bat
 npm run dev:public
 ```
 
-Öffne <http://localhost:4795/home/>. Die Vorschau zeigt die LG-Fassung. Apps starten dort nicht; das geht nur auf dem Fernseher.
+Öffne <http://localhost:4795/home/>. Die Vorschau zeigt die LG-Fassung. Apps starten dort nicht; das geht nur auf dem Fernseher. Beenden mit Strg+C.
 
-## 2. Entwicklermodus auf dem Fernseher
+## 3. Entwicklermodus auf dem Fernseher
 
-1. Im LG Content Store die App **Developer Mode** installieren und mit dem LG-Developer-Konto anmelden.
-2. **Dev Mode Status** und **Key Server** einschalten. Der Fernseher startet neu.
-3. In der Developer-Mode-App die angezeigte IP-Adresse und den Passphrase notieren.
+1. Im LG Content Store die App **Developer Mode** installieren, öffnen und mit deinem LG-Developer-Konto anmelden.
+2. **Dev Mode Status** einschalten. Der Fernseher startet neu.
+3. Die Developer-Mode-App erneut öffnen und **Key Server** einschalten.
+4. Die angezeigte **IP-Adresse** und die **Passphrase** notieren.
 
-Die Entwicklermodus-Sitzung läuft laut LG nach einer begrenzten Zeit ab und muss in der Developer-Mode-App verlängert werden (**Extend**). Läuft sie ab, verschwinden selbst installierte Apps wieder. Prüfe die aktuelle Dauer in der App.
+Die Entwicklermodus-Sitzung läuft laut LG nach 50 Stunden ab. Danach entfernt der Fernseher selbst installierte Apps wieder. Drücke deshalb in der Developer-Mode-App regelmäßig, spätestens alle zwei Tage, auf **Extend**. Die verbleibende Zeit steht in der App.
 
-## 3. Fernseher am Rechner einrichten
+## 4. Fernseher mit dem PC verbinden (einmalig)
 
-```sh
-npx -p @webos-tools/cli@3.2.6 ares-setup-device      # Gerät "tv" mit der IP-Adresse anlegen, Port 9922, Benutzer prisoner
-npx -p @webos-tools/cli@3.2.6 ares-novacom --device tv --getkey   # Passphrase aus der Developer-Mode-App eingeben
-npx -p @webos-tools/cli@3.2.6 ares-device -d tv --system-info    # Verbindung und webOS-Version prüfen
+Ersetze `192.168.0.42` durch die IP-Adresse aus der Developer-Mode-App:
+
+```bat
+npm run lg:setup -- 192.168.0.42
+npm run lg:key
+npm run lg:info
 ```
 
-Heißt dein Gerät nicht `tv`, setze `LG_DEVICE=<name>` vor die folgenden Befehle.
+- `lg:setup` trägt den Fernseher unter dem Namen `tv` ein. Ändert sich später die IP-Adresse, führst du den Befehl einfach mit der neuen Adresse erneut aus.
+- `lg:key` fragt nach der Passphrase. Tippe sie ein und drücke Enter.
+- `lg:info` zeigt bei Erfolg Modell und webOS-Version deines Fernsehers.
 
-## 4. Bauen, installieren, starten
+Beim ersten Mal lädt `npx` das LG-Werkzeug herunter; das dauert etwas. Fragt Windows, ob `node.exe` ins Netzwerk darf, erlaube es für private Netzwerke.
 
-```sh
-npm run package:webos   # erzeugt dist/io.github.luisstyle2359.cleanframe_<version>_all.ipk
+## 5. CleanFrame installieren und starten
+
+Baue das Paket und installiere es:
+
+```bat
+npm run package:webos
 npm run lg:install
 npm run lg:launch
 ```
 
-Danach erscheint CleanFrame auch in der normalen LG-App-Leiste.
+`package:webos` erzeugt `dist\io.github.luisstyle2359.cleanframe_<version>_all.ipk`. Alternativ baut GitHub das Paket bei jedem Push: Im Repository unter **Actions** den neuesten Lauf von **Check** öffnen, unter **Artifacts** `CleanFrame-LG` herunterladen, entpacken und die `.ipk`-Datei in den Ordner `dist` legen. Danach genügen `lg:install` und `lg:launch`.
+
+CleanFrame erscheint anschließend auch in der normalen LG-App-Leiste.
+
+## Wenn etwas nicht klappt
+
+| Meldung | Lösung |
+| --- | --- |
+| „…kann nicht geladen werden, da die Ausführung von Skripts … deaktiviert ist" | Du bist in PowerShell. Nimm die Eingabeaufforderung (`cmd`). |
+| „Python 3 was not found" oder „Python wurde nicht gefunden" | Python neu installieren, „Add python.exe to PATH" ankreuzen, dann ein neues `cmd`-Fenster öffnen. |
+| „Connection timed out" | Ist der Entwicklermodus noch aktiv? Sind PC und Fernseher im selben Netz? Hat sich die IP-Adresse geändert? Dann `npm run lg:setup -- <neue IP>`. |
+| CleanFrame ist vom Fernseher verschwunden | Die Entwicklermodus-Sitzung ist abgelaufen. In der Developer-Mode-App die Sitzung erneuern und `npm run lg:install` wiederholen. |
+| In CleanFrame steht „This TV does not let CleanFrame read its installed apps." | webOS verweigert die App-Abfrage. Apps auf der Startseite lassen sich trotzdem starten; melde den Fall bitte. |
+
+Heißt dein Gerät nicht `tv`, setze vor den Befehlen in `cmd` einmal `set LG_DEVICE=<name>`.
 
 ## Home-Taste und Start beim Einschalten
 
@@ -87,18 +128,19 @@ Ohne Root lässt sich die Home-Taste der LG-Fernbedienung **nicht** auf CleanFra
 
 ## App-ID ändern
 
-Die App-ID steht in `webos/appinfo.json` und als `SELF` in `app/device-webos.js`. Ändere beide gemeinsam; `npm run check` prüft, dass sie übereinstimmen. IDs, die mit `com.webos.`, `com.lge.` oder `com.palm.` beginnen, gehören LG und werden abgelehnt.
+Die App-ID steht in `webos/appinfo.json` und als `SELF` in `app/device-webos.js`. Ändere beide gemeinsam; `npm run check` prüft, dass sie übereinstimmen, und die Tests lesen sie aus `appinfo.json`. IDs, die mit `com.webos.`, `com.lge.` oder `com.palm.` beginnen, gehören LG und werden abgelehnt.
 
 ## Prüfen
 
 ```sh
 npm run check
-CLEANFRAME_PUBLIC_FONTS=1 npm run check:browser   # Samsung-Pfad
+npm run check:browser                             # Samsung-Pfad (Mac/Linux: CLEANFRAME_PUBLIC_FONTS=1 davor)
 npm run check:webos                               # LG-Pfad, ohne Fernseher
 ```
 
 ## Offene Punkte
 
 - Auf echter LG-Hardware testen: Start von Apps, LG Home, Zurück-Taste, Darstellung und Tempo der Glas-Effekte.
-- Ob `getAppLoadStatus` auf allen webOS-Versionen erlaubt ist, ist nur aus einem anderen Projekt ([webos-launcher](https://github.com/partridgeworks/webos-launcher), getestet auf webOS 6) bekannt.
-- LG verlangt künftig möglicherweise die Angabe `requiredACG` in `appinfo.json`. `ares-package` weist beim Bauen darauf hin; für die Installation im Entwicklermodus ist sie derzeit nicht nötig.
+- Ob `getAppLoadStatus` auf webOS 25 erlaubt ist, ist nur aus anderen Projekten bekannt ([webos-launcher](https://github.com/partridgeworks/webos-launcher) auf webOS 6, free-my-tv auf neueren Versionen).
+- `ares-package` warnt, dass `requiredACG` in `appinfo.json` fehlt. Bis webOS 25 wird diese Angabe nicht ausgewertet. Trage **kein** leeres `"requiredACG": []` ein: Ab webOS 26 würde das die Systemaufrufe sperren, die CleanFrame braucht. Vor einem Update auf webOS 26 müssen die richtigen Gruppen-Namen aus LGs ACG-Anleitung ergänzt werden.
+- Die Listen-Ansicht mit Foto belegt mehr Grafikspeicher als das Dock. Ob webOS CleanFrame auf dem Einstiegsmodell deshalb im Hintergrund schließt, zeigt erst der Test.

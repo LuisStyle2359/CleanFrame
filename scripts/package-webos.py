@@ -10,6 +10,8 @@ import zipfile
 from font_assets import ROOT, write_widget_archive
 
 CLI = '@webos-tools/cli@3.2.6'
+# On Windows npx is npx.cmd; shutil.which finds it through PATHEXT.
+NPX = shutil.which('npx') or 'npx'
 parser = argparse.ArgumentParser()
 parser.add_argument('--private-fonts', action='store_true', help='Include local Pangram fonts (personal builds only)')
 args = parser.parse_args()
@@ -35,7 +37,7 @@ for name in [info['icon'], info['largeIcon']]:
 for notice in ['LICENSE', 'THIRD_PARTY_NOTICES.md']:
     shutil.copyfile(ROOT / notice, stage / notice)
 
-result = subprocess.run(['npx', '--yes', '-p', CLI, 'ares-package', '--no-minify', '-o', str(dist), str(stage)], cwd=ROOT)
+result = subprocess.run([NPX, '--yes', '-p', CLI, 'ares-package', '--no-minify', '-o', str(dist), str(stage)], cwd=ROOT)
 if result.returncode:
     raise SystemExit('ares-package failed. The staged app is in ' + str(stage.relative_to(ROOT)) + '.')
 package = dist / (info['id'] + '_' + info['version'] + '_all.ipk')

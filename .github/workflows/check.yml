@@ -31,4 +31,9 @@ jobs:
       - run: npm run check:browser
       - run: npm run check:webos
       - run: npm run package:webos
+      - uses: actions/upload-artifact@v7
+        with:
+          name: CleanFrame-LG
+          path: dist/*.ipk
+          if-no-files-found: error
       - run: npm run export:public
